@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import "../../styles/pages/news.css";
 import "../../styles/global.css";
+import { manageAlert } from "../actions/alerts";
 
 export default function Notes() {
   const [news, setNews] = useState([]);
@@ -56,6 +57,35 @@ export default function Notes() {
       minute: "2-digit",
     }).format(date);
   };
+  const formatCondition = (condition, value) => {
+  const symbols = {
+    'price_above': '>',
+    'price_below': '<',
+    'pct_change_positive': '+%',
+    'pct_change_negative': '-%'
+  };
+  const symbol = symbols[condition] || condition;
+  const formattedValue = parseFloat(value);
+
+  return `${symbol} ${formattedValue}`;
+};
+
+  const alertClicked = async (alertItem) => {
+    try {
+      const result = await manageAlert({
+        ticker: alertItem.ticker,
+        condition: alertItem.condition_type, 
+        value: alertItem.target_value,
+      });
+
+      if (result.success && result.status === 'deleted') {
+        setAlerts((prev) => prev.filter((a) => a.alert_id !== alertItem.alert_id));
+      }
+    } catch (error) {
+      console.error("Failed to remove alert:", error);
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -116,8 +146,17 @@ export default function Notes() {
                 </div>
                 <div className = "alerts-list">
                     {alerts.map((alerts) => (
-                        <div key = {alerts.alert_id} className="alerts-wrapper" onClick={()=>handleTradeNavigation(alerts.ticker)}>
+                        <div key = {alerts.alert_id} className="alerts-wrapper">
                             <h2>{alerts.ticker}</h2>
+                            <span> {formatCondition(alerts.condition_type, alerts.target_value)}</span>
+                            <div className="actions">
+                              <button className="alerts-toggle "onClick={()=>alertClicked(alerts)} >
+                              <img src="/eye.svg" alt="alerts-toggle"/>
+                              </button> 
+                              <button className="alert-link"onClick={()=>handleTradeNavigation(alerts.ticker)} >
+                              <img src="/link-to.svg" alt="go-to"/>
+                              </button>  
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -128,8 +167,16 @@ export default function Notes() {
               </div>
                 <div className = "watchlist-list">
                     {watchlist.map((watchlist) => (
-                        <div key = {watchlist.watchlist_id} className="watchlist-wrapper" onClick={()=>handleTradeNavigation(watchlist.ticker)}>
+                        <div key = {watchlist.watchlist_id} className="watchlist-wrapper">
                             <h2>{watchlist.ticker}</h2>
+                            <div className="actions">
+                              <button className="watchlist-toggle "onClick={()=>watchlistClicked()} >
+                              <img src="/eye.svg" alt="watchlist-toggle"/>
+                              </button> 
+                              <button className="watchlist-link"onClick={()=>handleTradeNavigation(watchlist.ticker)} >
+                              <img src="/link-to.svg" alt="go-to"/>
+                              </button>      
+                            </div>                  
                         </div>
                     ))}
                 </div>
