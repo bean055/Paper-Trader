@@ -1,0 +1,103 @@
+.forgot-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;    
+  padding-right: 30%;    
+}
+
+
+.forgot-window {
+  background: linear-gradient(to bottom, #232B26, #0C0B0D 100%);
+  color: white;
+  width: 100%;
+  max-width: 420px;
+  padding: 2rem;
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  
+  animation: slideInRight 0.35s ease-out;
+}
+
+
+.forgot-window input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.18);
+  font-size: 0.95rem;
+}
+.forgot-window button {
+  padding: 0.7rem 0.8rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.18);
+  cursor: pointer;
+}
+
+
+.forgot-fields {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+
+.forgot-fields button {
+  flex: 1;
+  padding: 0.7rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+.forgot-fields button.submit {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.forgot-fields button.cancel {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.error {
+  color: #f17e7e;
+  margin-bottom: 0.75rem;
+}
+
+.success {
+  color: #2c7948;
+}
+.forgot-window .success {
+  margin: 1rem;
+
+
+}
+
+
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .forgot-overlay {
+    justify-content: center;
+    padding-right: 0;
+  }
+}
