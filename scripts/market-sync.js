@@ -18,9 +18,9 @@ async function syncNews() {
 
     for (const item of newsItems) {
       const query = `
-        INSERT INTO news (news_id, headline, summary, url, source, published_at)
-        VALUES ($1, $2, $3, $4, $5, $6)
-        ON CONFLICT (news_id) DO NOTHING;
+        INSERT INTO news (news_id, finnhub_id, headline, summary, url, source, published_at)
+        VALUES ($1, $1, $2, $3, $4, $5, $6)
+        ON CONFLICT (finnhub_id) DO NOTHING;
       `;
       const values = [
         item.id.toString(),
