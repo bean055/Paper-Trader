@@ -4,8 +4,8 @@ export default function dashboard() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-500 flex items-center justify-center">
-        <h1 className="text-white text-4xl font-bold">DEATH TO SUSAN</h1>
+      <div className="min-h-screen flex items-center justify-center">
+        <h1 className="text-white text-4xl font-bold">Dashboard</h1>
       </div>
     </>
   );

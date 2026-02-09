@@ -19,14 +19,29 @@ export async function GET(request) {
         const userId = userRes.rows[0].user_id;
         const { searchParams } = new URL(request.url);
         const type = searchParams.get("type") || "all";
+        const ticker = searchParams.get("ticker");
 
         let responseData = {};
 
         if (type === "all" || type === "news") {
-            const news = await pool.query(
+            let newsRows = [];
+
+            if (ticker) {
+                const newsRes = await pool.query(
+                `SELECT n.* FROM news n 
+                JOIN news_tickers nt ON n.news_id = nt.news_id 
+                WHERE nt.ticker = $1 
+                ORDER BY n.published_at DESC LIMIT 20`, 
+                [ticker]
+                );
+                newsRows = newsRes.rows;
+            } else {
+                const newsRes = await pool.query(
                 "SELECT * FROM news ORDER BY published_at DESC LIMIT 20"
-            );
-            responseData.news = news.rows;
+                );
+                newsRows = newsRes.rows;
+                }
+            responseData.news = newsRows;
         }
 
         if (type === "all" || type === "alerts") {

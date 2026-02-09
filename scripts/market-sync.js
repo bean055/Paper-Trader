@@ -30,7 +30,24 @@ async function syncNews() {
         item.source,
         new Date(item.datetime * 1000)
       ];
-      await client.query(query, values);
+
+      const res = await client.query(newsQuery, newsValues);
+      const newsId = res.rows[0].news_id;
+
+      if (item.related) {
+        const tickers = item.related.split(',').map(t => t.trim().toUpperCase());
+
+        for (const ticker of tickers) {
+          if (ticker) {
+            const tickerQuery = 
+            ` INSERT INTO news_tickers (news_id, ticker)
+              VALUES ($1, $2)
+              ON CONFLICT (news_id, ticker) DO NOTHING;
+            `;
+            await client.query(tickerQuery, [newsId, ticker]);
+          }
+        }
+      }
     }
     console.log(" Complete.");
   } catch (err) {

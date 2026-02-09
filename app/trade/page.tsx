@@ -5,7 +5,6 @@ export default function Home() {
     <>
     <Navbar/>
     <div className="trade-page">
-      <img src="/jigsaw.svg" alt="jig" />
       <h1 className="text-white text-4xl font-bold">Welcome to Paper Trader</h1>
     </div>
     </>

@@ -86,6 +86,26 @@ export default function Notes() {
     }
   };
 
+  const onSearch = async (ticker) => {
+  try {
+    if (!ticker) {
+      fetchNewsPage();
+      return;
+    }
+    const response = await fetch(`/api/news?type=news&ticker=${ticker.toUpperCase()}`);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Search failed");
+    }
+    const data = await response.json();
+    setNews(data.news || []);
+    
+  } catch (error) {
+    console.error("Error during search:", error.message);
+  }
+};
+
   return (
     <>
       <Navbar />
@@ -94,6 +114,9 @@ export default function Notes() {
           <div className="news-banner">
             <div className="banner-content">
               <h1>{selectedNews ? " " : "News"}</h1>
+              <input type="text" className="search-news" placeholder="type a ticker..." 
+              onKeyDown={(e) => {if (e.key === 'Enter') {onSearch(e.target.value);}}}/>
+
               {selectedNews && (
                 <button className="back-button" onClick={() => setSelectedNews(null)}>
                   ← Back to List
