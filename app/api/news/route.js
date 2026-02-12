@@ -43,17 +43,23 @@ export async function GET(request) {
                 }
             responseData.news = newsRows;
         }
-
-        if (type === "all" || type === "alerts") {
+        if (type === "all") {
             const alerts = await pool.query(
                 "SELECT * FROM alerts WHERE user_id = $1 AND is_active = TRUE", [userId]
             );
             responseData.alerts = alerts.rows;
-        }
-
-        if (type === "all" || type === "watchlist") {
+        
             const watchlist = await pool.query(
-                "SELECT * FROM watchlists WHERE user_id = $1", [userId]
+            `SELECT
+                watchlists.ticker, 
+                stocks.current_price, 
+                stocks.last_price,
+                ((stocks.current_price - stocks.last_price) / stocks.last_price * 100) AS percent_change
+            FROM watchlists
+            JOIN stocks ON watchlists.ticker = stocks.asset_symbol
+            WHERE watchlists.user_id = $1
+            ORDER BY percent_change DESC`,          
+            [userId]
             );
             responseData.watchlist = watchlist.rows;
         }
@@ -61,7 +67,7 @@ export async function GET(request) {
         return NextResponse.json(responseData);
 
     } catch (error) {
-        console.error("Dashboard Route Error:", error);
+        console.error("route error", error);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

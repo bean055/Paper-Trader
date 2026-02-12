@@ -12,7 +12,6 @@ async function syncNews() {
 
   try {
     await client.connect();
-    console.log("Connected DB.");
     const response = await fetch(`https://finnhub.io/api/v1/news?category=general&token=${process.env.FINNHUB_KEY}`);
     const newsItems = await response.json();
 
@@ -49,9 +48,11 @@ async function syncNews() {
         }
       }
     }
-    console.log(" Complete.");
-  } catch (err) {
-    console.error(" Error:", err);
+    const deleteQuery = "DELETE FROM news WHERE published_at < NOW() - INTERVAL '14 days';";
+    await client.query(deleteQuery);
+    
+  } catch (error) {
+    console.error(error);
   } finally {
     await client.end();
   }

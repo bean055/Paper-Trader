@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "app/api/finnhub/route.js", "app/api/alphavantage/route.js", "app/utilities/database.js", "app/utilities/apis.js", "app/layout.jsx", "app/page.jsx"  ],
+, "app/api/finnhub/route.js", "app/api/alphavantage/route.js", "app/utilities/database.js", "app/utilities/apis.js", "app/layout.jsx", "app/page.jsx", "app/components/Navbar.jsx"  ],
   "exclude": ["node_modules"]
 }

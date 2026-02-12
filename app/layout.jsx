@@ -1,17 +1,16 @@
 import "../styles/global.css";
-
-
-export const metadata = {
-  title: "Paper Trader"
-};
+import { Toaster } from 'sonner';
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <main>
-          {children}
-        </main>
+        {children}
+        <Toaster
+         position="top-right"
+         expand={true}
+         richColors
+        />
       </body>
     </html>
   );

@@ -6,8 +6,9 @@ import { useRouter } from "next/navigation";
 import "../../styles/pages/news.css";
 import "../../styles/global.css";
 import { manageAlert } from "../actions/alerts";
+import { manageWatchlist} from "../actions/watchlist";
 
-export default function Notes() {
+export default function News() {
   const [news, setNews] = useState([]);
   const [alerts, setAlerts] = useState([]);
   const [watchlist, setWatchlist] = useState([]);
@@ -32,14 +33,13 @@ export default function Notes() {
     } catch (error) {
         console.error("eror on load", error.message);
     }
-    };
+  };
 
   useEffect(() => {
     fetchNewsPage();
   }, []);
 
   const newsSelect = (article) => {
-    console.log("Selected News:", article);
     setSelectedNews(article);
   };
   const handleTradeNavigation = (ticker) => {
@@ -67,8 +67,8 @@ export default function Notes() {
   const symbol = symbols[condition] || condition;
   const formattedValue = parseFloat(value);
 
-  return `${symbol} ${formattedValue}`;
-};
+  return `${symbol} ${formattedValue}`; 
+  };
 
   const alertClicked = async (alertItem) => {
     try {
@@ -82,9 +82,19 @@ export default function Notes() {
         setAlerts((prev) => prev.filter((a) => a.alert_id !== alertItem.alert_id));
       }
     } catch (error) {
-      console.error("Failed to remove alert:", error);
+      console.error(error);
     }
   };
+  const watchlistClicked = async (watchItem) => {
+    try{
+      const result = await manageWatchlist({ticker: watchItem.ticker})
+      if (result.success && result.status === 'deleted'){
+        setWatchlist((prev) => prev.filter((watchlist) => watchlist.ticker !== watchItem.ticker));
+      }
+    }catch(error){
+      console.error("failed watchlist click",error);
+    }
+  }
 
   const onSearch = async (ticker) => {
   try {
@@ -104,7 +114,7 @@ export default function Notes() {
   } catch (error) {
     console.error("Error during search:", error.message);
   }
-};
+  };
 
   return (
     <>
@@ -192,8 +202,12 @@ export default function Notes() {
                     {watchlist.map((watchlist) => (
                         <div key = {watchlist.watchlist_id} className="watchlist-wrapper">
                             <h2>{watchlist.ticker}</h2>
+                           <span className={`percent-tag ${watchlist.percent_change >= 0 ? "pos" : "neg"}`}>
+                            {watchlist.percent_change >= 0 ? "+" : ""}
+                            {parseFloat(watchlist.percent_change).toFixed(2)}%
+                          </span>
                             <div className="actions">
-                              <button className="watchlist-toggle "onClick={()=>watchlistClicked()} >
+                              <button className="watchlist-toggle "onClick={()=>watchlistClicked(watchlist)} >
                               <img src="/eye.svg" alt="watchlist-toggle"/>
                               </button> 
                               <button className="watchlist-link"onClick={()=>handleTradeNavigation(watchlist.ticker)} >
