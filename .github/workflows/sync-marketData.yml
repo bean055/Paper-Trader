@@ -2,7 +2,7 @@ name: Market Data Sync
 
 on:
   schedule:
-    - cron: "26 * * * *"
+    - cron: "20 */2 * * *"
   workflow_dispatch:
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.jsg
         uses: actions/setup-node@v4
         with:
           node-version: "20"
