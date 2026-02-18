@@ -12,9 +12,8 @@ async function syncStocks() {
 
   try {
     await client.connect();
-    const stockResponse = await client.query("SELECT asset_symbol FROM stocks");
+    const stockResponse = await client.query("SELECT asset_symbol FROM stocks ORDER BY stock_id ASC");
     const tickers = stockResponse.rows.map(r => r.asset_symbol);
-    let updatedCount = 0;
 
     for (const ticker of tickers) {
       const quoteResponse = await fetch(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${process.env.FINNHUB_KEY}`);
@@ -37,11 +36,10 @@ async function syncStocks() {
         ];
 
         await client.query(updateQuery, values);
-        updatedCount++;
-        console.log(`[${updatedCount}/${tickers.length}] Updated ${ticker}: $${quote.c}`);
+        console.log(`[${tickers.length}] Updated ${ticker}: $${quote.c}`);
       }
 
-      await new Promise(res => setTimeout(res, 250));
+      await new Promise(res => setTimeout(res, 1000));
     }
 
   } catch (error) {

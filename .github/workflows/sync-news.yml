@@ -1,11 +1,11 @@
 name: Sync Jobs
 
 on:
-  #schedule:
+  # schedule:
   #  - cron: "*/30 * * * *"
   #  - cron: "0 */4 * * *"
   #  - cron: "0 0 * * *"
-  #  - cron: "0 0 * * 0"
+  #  - cron: "0 0 1 * *"
   workflow_dispatch:
 
 env:
@@ -18,7 +18,9 @@ env:
 
 jobs:
   marketdata-sync:
-    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '*/30 * * * *'
+    if: |
+      github.event_name == 'workflow_dispatch' || 
+      (github.event.schedule == '*/30 * * * *' && github.event.schedule != '0 0 * * *')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +32,7 @@ jobs:
       - run: node scripts/marketdata-sync.js
 
   news-sync:
-    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 */4 * * *'
+    if: github.event.schedule == '0 */4 * * *'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +44,7 @@ jobs:
       - run: node scripts/news-sync.js
 
   daily-marketdata-sync:
-    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 0 * * *'
+    if: github.event.schedule == '0 0 * * *'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -52,3 +54,15 @@ jobs:
           cache: "npm"
       - run: npm install
       - run: node scripts/daily-marketdata-sync.js
+
+  monthly-marketdata-sync:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 0 1 * *'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm install
+      - run: node scripts/monthly-marketdata-sync.js
