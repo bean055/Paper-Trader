@@ -2,7 +2,6 @@
   display: flex;
   height: 100vh;
   width: 100%;
-  background: linear-gradient(to bottom, #232B26, #0C0B0D 90%);
   padding: 2rem;
   padding-top: calc(3rem + 2rem);
   gap: 2rem;
@@ -11,7 +10,8 @@
 .news-panel {
   width: 70%; 
   box-sizing: border-box;
-  background: linear-gradient(to bottom, #2E3B2B, #657E5E 90%);
+  background: linear-gradient(to bottom, #2E3B2B, #1a2318 90%);
+  border: 1px solid #4a5d45; 
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -20,27 +20,21 @@
   gap: 1rem;
 }
 
-.news-banner {
-  padding-left: 1rem;
-  border-radius: 4px;
-  background-color: rgb(23, 26, 24);
+.news-banner, .alerts-banner, .watchlist-banner {
+  padding: 16px 20px;
+  background: #242f21;
+  border-bottom: 1px solid #4a5d45;
 }
-.alerts-banner {
-  border-radius: 4px;
-  background-color: rgb(23, 26, 24);
-}
-.watchlist-banner {
-  border-radius: 4px;
-  background-color: rgb(23, 26, 24);
-}
-.news-banner h1 {
+
+.news-banner h1, .alerts-banner h1, .watchlist-banner h1 {
   margin: 0;
   font-family: "Kantumruy Pro", sans-serif;
-  font-size: 2rem;
-  font-weight: 600;
-  color: white;
-  padding: 1rem;
+  font-size: 1.2rem; 
+  color: #a3b89e;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
+
 .search-news{
   font-family: "inter", sans-serif;
   border-bottom: 1px solid #FFFFFF;
@@ -186,21 +180,12 @@
 .watchlist-panel {
   flex: 1;
   border-radius: 4px;
-  background: linear-gradient(to bottom, #2E3B2B, #657E5E 90%);
+  border: 1px solid #4a5d45; 
+  background: linear-gradient(to bottom, #2E3B2B, #1a2318 90%);
   display: flex;
   flex-direction: column;
   max-height: 50%;
   gap: 1rem;
-}
-
-.alerts-panel h1,
-.watchlist-panel h1 {
-  text-align: center;
-  padding: 1rem;
-  font-family: "Kantumruy Pro", sans-serif;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: white;
 }
 
 .alerts-list,
@@ -232,10 +217,10 @@
   position: relative;
   min-height: 50px;
 }
-
+ 
 .alerts-wrapper:hover,
 .watchlist-wrapper:hover {
-  background-color: rgba(23, 26, 24, 0.9);
+  background: #41553d;
   border-color: #657E5E;
   transform: translateY(-2px);
 }

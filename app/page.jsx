@@ -12,28 +12,33 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [showForgot, setShowForgot] = useState(false);
+  const [loading, setLoading] = useState(false)
+
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
+  e.preventDefault();
+  setLoading(true); 
+  setError(null);
+  try {
+    const response = await fetch("/api/credentials/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-    try {
-      const response = await fetch("/api/credentials/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        setError("Invalid email or password");
-        return;
-      }
-
-      router.push("/dashboard");
-    } catch (err) {
-      setError("Something went wrong. Try again.");
+    if (!response.ok) {
+      const data = await response.json();
+      setError(data.error || "Invalid email or password");
+      setLoading(false);
+      return;
     }
-  };
+
+    router.push("/dashboard");
+  } catch (err) {
+    setError("Connection error. Try again.");
+    setLoading(false);
+  }
+};
 
   return (
     <div className="login-page">
@@ -64,7 +69,7 @@ export default function LoginPage() {
           
           {error && <p className="error">{error}</p>}
 
-          <button type="submit">
+          <button type="submit" disabled={loading}>
             <img src="/enter.svg" alt="Submit" />
           </button>
 

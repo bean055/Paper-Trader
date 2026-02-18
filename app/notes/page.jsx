@@ -196,7 +196,7 @@ export default function Notes() {
     <div className="notes-page">
       <div className="notes-container">
         <div className="notes-banner">
-          <h1>Notes</h1>
+          <h1>NOTES</h1>
           <button
             type="button"
             className="folder-create-btn"

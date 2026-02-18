@@ -1,0 +1,34 @@
+.Dashboard-page {
+  display: flex;
+  justify-content: flex-start; 
+  padding: 80px 40px; 
+  min-height: 100vh;
+  color: white;
+}
+
+
+.account-info {
+  padding: 24px;
+  width: 100%;
+  max-width: 300px; 
+  height: fit-content; 
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.account-info h2 {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  color: #00d094; 
+}
+
+.account-info p {
+  font-size: 0.9rem;
+  color: #ffffff;
+  margin-bottom: 16px;
+}
+
+.account-info hr {
+  border: 0;
+  border-top: 1px solid #ffffff;
+  margin: 16px 0;
+}

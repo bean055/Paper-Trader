@@ -2,12 +2,8 @@ const { Client } = require('pg');
 
 async function syncNews() {
   const client = new Client({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    ssl: { rejectUnauthorized: false } 
+    connectionString: process.env.DATABASE_URL, 
+    ssl: { rejectUnauthorized: false }
   });
 
   try {
@@ -19,7 +15,9 @@ async function syncNews() {
       const query = `
         INSERT INTO news (finnhub_id, headline, summary, url, source, published_at)
         VALUES ($1, $2, $3, $4, $5, $6)
-        ON CONFLICT (finnhub_id) DO NOTHING;
+        ON CONFLICT (finnhub_id) 
+        DO UPDATE SET headline = EXCLUDED.headline 
+        RETURNING news_id;
       `;
       const values = [
         item.id.toString(),
@@ -30,29 +28,27 @@ async function syncNews() {
         new Date(item.datetime * 1000)
       ];
 
-      const res = await client.query(newsQuery, newsValues);
-      const newsId = res.rows[0].news_id;
+      const res = await client.query(query, values);
+      const newsId = res.rows[0]?.news_id;
 
-      if (item.related) {
+      if (newsId && item.related) {
         const tickers = item.related.split(',').map(t => t.trim().toUpperCase());
-
         for (const ticker of tickers) {
           if (ticker) {
-            const tickerQuery = 
-            ` INSERT INTO news_tickers (news_id, ticker)
-              VALUES ($1, $2)
-              ON CONFLICT (news_id, ticker) DO NOTHING;
-            `;
-            await client.query(tickerQuery, [newsId, ticker]);
+            await client.query(
+              `INSERT INTO news_tickers (news_id, ticker)
+               VALUES ($1, $2) ON CONFLICT DO NOTHING;`,
+              [newsId, ticker]
+            );
           }
         }
       }
     }
-    const deleteQuery = "DELETE FROM news WHERE published_at < NOW() - INTERVAL '14 days';";
-    await client.query(deleteQuery);
-    
+    await client.query("DELETE FROM news WHERE published_at < NOW() - INTERVAL '14 days';");
+    console.log("News sync completed.");
+
   } catch (error) {
-    console.error(error);
+    console.error("Sync Error:", error);
   } finally {
     await client.end();
   }
