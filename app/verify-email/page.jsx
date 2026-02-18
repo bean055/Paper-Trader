@@ -1,10 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import "../../styles/pages/email_verify.css";
 
 export default function VerifyEmailPage() {
+  return (
+    <div className="verify-email">
+      <Suspense fallback={<div className="verify-card"><h1>Loading...</h1></div>}>
+        <VerifyEmailContent />
+      </Suspense>
+    </div>
+  );
+}
+
+function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");

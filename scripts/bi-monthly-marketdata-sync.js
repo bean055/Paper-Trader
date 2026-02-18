@@ -25,17 +25,19 @@ async function syncStocks() {
             UPDATE stocks 
             SET 
               sector = $1, 
-              industry = $2, 
+              country = $2, 
               website = $3,
-              logo_url = $4
-            WHERE asset_symbol = $5
+              logo_url = $4,
+              currency = $5
+            WHERE asset_symbol = $6
           `;
 
           const values = [
             data.finnhubIndustry,
-            data.industry,
+            data.country,
             data.weburl,
             data.logo,
+            data.currency,
             ticker
           ];
 

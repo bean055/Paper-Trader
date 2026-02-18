@@ -44,7 +44,7 @@ export async function GET(request) {
             responseData.watchlist = watchlist.rows;
         }
 
-        if (type === "all") {
+        if (type === "all"|| type === "alerts" ) {
             const alerts = await pool.query(
                 "SELECT * FROM alerts WHERE user_id = $1 AND is_active = TRUE", [userId]
             );

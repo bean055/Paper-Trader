@@ -1,22 +1,29 @@
 .trade-page {
   display: grid;
-  grid-template-columns: 4fr 3fr 3fr;
+  grid-template-columns: 3fr 2fr 4fr;
   grid-template-rows: 1fr 1fr 280px;
   grid-template-areas:
-    "list info watch"
-    "list info watch"
-    "list exec exec";
+    "list watch info"
+    "list watch info"
+    "exec exec info";
   height: calc(100vh - 60px);
   gap: 12px;
   padding: 12px;
   margin-top: 60px;
   box-sizing: border-box;
 }
-.trade-page img{
-    max-width: 20px;
-    max-height: 20px;
+
+.trade-page img {
+  max-width: 20px;
+  max-height: 20px;
 }
 
+.trade-page img.logo {
+  max-width: 50px;
+  max-height: 50px;
+  width: 50px;
+  height: 50px;
+}
 
 .Stocks-panel { grid-area: list; }
 .info-panel { grid-area: info; }
@@ -51,6 +58,7 @@
   border-bottom: 1px solid #4a5d45;
   color: #ffffff; 
   outline: none;
+  background: transparent;
 }
 
 .search-stocks::placeholder {
@@ -82,13 +90,25 @@
 }
 
 .ticker-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   font-size: 1rem;
   color: #ffffff;
 }
 
+.symbol-text {
+  font-weight: bold;
+}
+
+.name-text {
+  color: rgb(172, 172, 172);
+  font-size: small;
+}
+
 .current-price {
   font-weight: bold;
-  color: #00ff88;
+  color: #ffffff;
 }
 
 .pagination {
@@ -99,7 +119,6 @@
   background: #242f21;
   border-top: 1px solid #4a5d45;
 }
-
 .pagination button {
   background: #394a35;
   border: 1px solid #4a5d45;
@@ -109,10 +128,12 @@
   cursor: pointer;
   transition: 0.2s;
 }
-
-.pagination button:hover {
+.pagination button:hover:not(:disabled) {
   background: #41553d;
-  color: #3b753b;
+}
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .panel-title {
@@ -125,6 +146,34 @@
   border-bottom: 1px solid #4a5d45;
 }
 
+.detail-header {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border: 2px solid #4a5d45; 
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.tag-container, .tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
 .details-view {
   padding: 20px;
 }
@@ -135,17 +184,20 @@
   color: #ffffff;
 }
 
+.webURL,
+.currency-tag,
 .sector-tag {
   background: #394a35;
   padding: 4px 10px;
-  border-radius: 12px;
+  border-radius: 4px;
   font-size: 0.75rem;
-  color: #00ff88;
+  color: #ffffff;
   border: 1px solid #4a5d45;
+  text-decoration: none;
 }
 
 .info-full-name {
-  color: #a3b89e;
+  color: #ffffff;
   font-size: 1.1rem;
   margin-bottom: 24px;
 }
@@ -160,8 +212,7 @@
 .price-current {
   font-size: 2rem;
   font-weight: bold;
-  color: #00ff88;
-  text-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+  color: #ffffff;
 }
 
 .empty-state {
@@ -174,9 +225,10 @@
   padding: 20px;
   color: #5c7058;
 }
-.empty-state img{
- max-width: 100px;
- max-height: 100px;
+
+.empty-state img {
+  max-width: 100px;
+  max-height: 100px;
 }
 
 .watchlist-item-left {
@@ -217,11 +269,169 @@
   font-weight: 500;
 }
 
-.watchlist-panel .stock-item {
-  padding: 10px 16px;
-  min-height: 50px;
+.watchlist-panel-t .stock-list-container::-webkit-scrollbar {
+  width: 6px;
 }
 
-.tmp {
-  padding: 16px;
+.watchlist-panel-t .stock-list-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.watchlist-panel-t .stock-list-container::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+.watchlist-panel-t:hover .stock-list-container::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #242f21;
+  border-bottom: 1px solid #4a5d45;
+  padding: 4px 10px;
+}
+
+.execution-panel .panel-title {
+  padding: 0;
+  border-bottom: none;
+  font-size: 0.85rem;
+}
+
+.order-type-toggle {
+  position: relative; 
+  display: flex;
+  background: #1a2318;
+  padding: 2px;
+  border-radius: 6px;
+  border: 1px solid #4a5d45;
+  width: 120px; 
+  height: 32px;
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden; 
+}
+
+.slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: calc(50% - 2px); 
+  height: calc(100% - 4px);
+  background-color: #2ebd4b; 
+  border-radius: 4px;
+  transition: transform 0.3s;
+  z-index: 1;
+}
+
+.order-type-toggle.SELL .slider {
+  transform: translateX(100%); 
+  background-color: #bc3a4b;   
+}
+
+.type-BUY, .type-SELL {
+  flex: 1;
+  text-align: center;
+  line-height: 28px;
+  font-size: 11px;
+  font-weight: 800;
+  z-index: 2; 
+  color: #5a5a5a;
+  transition: color 0.2s ease;
+}
+
+.order-type-toggle.BUY .type-BUY { color: white; }
+.order-type-toggle.SELL .type-SELL { color: white; }
+
+.trade-execution-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 6px 12px;
+  gap: 8px;
+}
+
+.trade-ex-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  border-bottom: 1px solid #2a3528;
+  padding-bottom: 4px;
+}
+
+.ex-symbol {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.ex-name {
+  font-size: 0.75rem;
+  color: rgb(172, 172, 172);
+}
+
+.trade-ex-stats {
+  display: flex;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.15);
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.ex-stat-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.ex-stat-row label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  color: #a3b89e;
+}
+
+.ex-stat-row span {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.trade-ex-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+  padding-bottom: 4px;
+}
+
+.trade-ex-inputs label {
+  font-size: 0.7rem;
+  color: #a3b89e;
+}
+
+.quantity-input {
+  background: #1a2318;
+  border: 1px solid #4a5d45;
+  border-radius: 4px;
+  padding: 6px 12px;
+  color: white;
+  font-size: 1rem;
+  outline: none;
+}
+
+.confirm-btn {
+  background: #394a35;
+  border: 1px solid #4a5d45;
+  color: #ffffff;
+  padding: 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.confirm-btn:hover {
+  opacity: 0.8;
 }

@@ -1,10 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import "../../styles/pages/reset.css";
 
 export default function ResetPasswordPage() {
+  return (
+    <div className="reset-page">
+      <h1>E-Paper Trader</h1>
+      <Suspense fallback={<p>Loading reset form...</p>}>
+        <ResetPasswordContent />
+      </Suspense>
+    </div>
+  );
+}
+
+function ResetPasswordContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get("token");
@@ -44,11 +55,10 @@ export default function ResetPasswordPage() {
       }
 
       setSuccess(true);
-
       setTimeout(() => {
         router.push("/");
       }, 2000);
-    } catch {
+    } catch (err) {
       setError("Something went wrong");
     } finally {
       setLoading(false);
@@ -60,47 +70,44 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="reset-page">
-        <h1>E-Paper Trader</h1>
-      <form onSubmit={handleSubmit} className="reset-card">
-        <h2>Reset Password</h2>
+    <form onSubmit={handleSubmit} className="reset-card">
+      <h2>Reset Password</h2>
 
-        {!success ? (
-          <>
-            <input
-              type="password"
-              placeholder="New password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="reset-input"
-            />
+      {!success ? (
+        <>
+          <input
+            type="password"
+            placeholder="New password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="reset-input"
+          />
 
-            <input
-              type="password"
-              placeholder="Confirm password"
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-              required
-              className="reset-input"
-            />
+          <input
+            type="password"
+            placeholder="Confirm password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            required
+            className="reset-input"
+          />
 
-            {error && <p className="reset-error">{error}</p>}
+          {error && <p className="reset-error">{error}</p>}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="reset-button"
-            >
-              {loading ? "Updating..." : "Update Password"}
-            </button>
-          </>
-        ) : (
-          <p className="reset-success">
-            Password updated. Redirecting to login…
-          </p>
-        )}
-      </form>
-    </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="reset-button"
+          >
+            {loading ? "Updating..." : "Update Password"}
+          </button>
+        </>
+      ) : (
+        <p className="reset-success">
+          Password updated. Redirecting to login…
+        </p>
+      )}
+    </form>
   );
 }

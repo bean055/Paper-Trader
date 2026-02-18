@@ -10,7 +10,17 @@ export async function GET() {
         asset_name, 
         current_price, 
         last_price, 
-        sector 
+        sector,
+        website,
+        market_cap, 
+        pe_ratio,
+        dividend_yield,
+        eps,
+        high_52,low_52,
+        updated_at,
+        recommendation_json,
+        logo_url,
+        currency
       FROM stocks 
       ORDER BY asset_symbol ASC
     `;
