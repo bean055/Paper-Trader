@@ -1,10 +1,14 @@
 const { Client } = require('pg');
 
 async function syncDaily() {
-  const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-  });
+ const client = new Client({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: parseInt(process.env.DB_PORT),
+  ssl: { rejectUnauthorized: false }
+});
 
   try {
     await client.connect();
