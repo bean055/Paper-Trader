@@ -9,41 +9,34 @@ async function syncStocks() {
   port: parseInt(process.env.DB_PORT),
   ssl: { rejectUnauthorized: false }
 });
-
+  const groupSize = 10;
   try {
     await client.connect();
     const stockResponse = await client.query("SELECT asset_symbol FROM stocks ORDER BY stock_id ASC");
     const tickers = stockResponse.rows.map(r => r.asset_symbol);
 
-    for (const ticker of tickers) {
-      const quoteResponse = await fetch(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${process.env.FINNHUB_KEY}`);
-      const quote = await quoteResponse.json();
+    for (let i = 0; i < tickers.length; i += groupSize) {
+      const batch = tickers.slice(i, i + groupSize);
 
-      if (quote.c) {
-        const updateQuery = `
-          UPDATE stocks 
-          SET 
-            current_price = $1, 
-            last_price = $2, 
-            updated_at = NOW() 
-          WHERE asset_symbol = $3
-        `;
+      await Promise.all(batch.map(async (ticker) => {
+        try {
+          const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${process.env.FINNHUB_KEY}`);
+          const quote = await res.json();
 
-        const values = [
-          quote.c,
-          quote.pc,
-          ticker
-        ];
+          if (quote.c) {
+            await client.query(
+              "UPDATE stocks SET current_price = $1, last_price = $2, updated_at = NOW() WHERE asset_symbol = $3",
+              [quote.c, quote.pc, ticker]
+            );
+          }
+        } catch (e) {}
+      }));
 
-        await client.query(updateQuery, values);
-        console.log(`[${tickers.length}] Updated ${ticker}: $${quote.c}`);
+      if (i + groupSize < tickers.length) {
+        await new Promise(r => setTimeout(r, 10000));
       }
-
-      await new Promise(res => setTimeout(res, 1000));
     }
-
   } catch (error) {
-    console.error("Stock Sync Error  ", error);
   } finally {
     await client.end();
   }
