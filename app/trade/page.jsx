@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState, useCallback } from "react";
+import {socket} from "../utilities/socket"
 import "../../styles/pages/trade.css"
 import Navbar from "../components/Navbar"
 import "../../styles/global.css";
