@@ -1,11 +1,10 @@
 import  Pool  from "./database.js";
-
-const {Server} = require("socket.io");
-const WebSocket = require("ws")
+import WebSocket from "ws";
+import { Server } from "socket.io";
 
 
 const io = new Server(process.env.PORT, {
-  cors: { origin: "https://paper-trader-1dj1p316t-bean055s-projects.vercel.app" } 
+  cors: { origin: "*" } 
 });
 async function livePriceData(){
     try{
