@@ -1,11 +1,10 @@
-import { Socket } from "dgram";
-import  Pool  from "utilities/database.js";
+import  Pool  from "./database.js";
 
 const {Server} = require("socket.io");
 const WebSocket = require("ws")
 
 
-const io = new Server(process.env.PORT || 3001, {
+const io = new Server(process.env.PORT, {
   cors: { origin: "https://paper-trader-1dj1p316t-bean055s-projects.vercel.app" } 
 });
 async function livePriceData(){
