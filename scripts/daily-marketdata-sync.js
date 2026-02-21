@@ -1,4 +1,5 @@
-const { Client } = require('pg');
+import pkg from 'pg';
+const { Client } = pkg;
 
 async function syncDaily() {
  const client = new Client({
