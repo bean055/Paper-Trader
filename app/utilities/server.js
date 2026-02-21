@@ -36,8 +36,15 @@ app.prepare().then(() => {
 
       finnhubSocket.on("message", async (data) => {
         const parsed = JSON.parse(data);
-        if (parsed.type === "trade") {
+
+        if (parsed.type === "ping") {
+           console.log("pinged by API");
+           return;
+        }
+        
+        if (parsed.type === "trade" && parsed.data && Array.isArray(parsed.data)) {
           const { s: symbol, p: price } = parsed.data[0];
+          console.log(`Incoming: ${symbol} at $${price}`);
           await Pool.query(
             "UPDATE stocks SET current_price = $1, last_updated = NOW() WHERE asset_symbol = $2",
             [price, symbol]
