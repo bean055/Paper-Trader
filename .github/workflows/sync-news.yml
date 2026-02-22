@@ -33,7 +33,7 @@ jobs:
       - run: node scripts/marketdata-sync.js
 
   news-sync:
-    if: github.event.schedule == '0 */12 * * *'
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 */12 * * *'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -45,7 +45,7 @@ jobs:
       - run: node scripts/news-sync.js
 
   daily-marketdata-sync:
-    if: github.event.schedule == '0 0 * * *'
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 0 * * *'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
       - run: node scripts/daily-marketdata-sync.js
 
   monthly-marketdata-sync:
-    if: github.event.schedule == '0 0 1 */2 *'
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 0 1 */2 *'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
