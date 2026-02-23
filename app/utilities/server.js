@@ -46,7 +46,7 @@ app.prepare().then(() => {
           const { s: symbol, p: price } = parsed.data[0];
           console.log(`Incoming: ${symbol} at $${price}`);
           await Pool.query(
-            "UPDATE stocks SET current_price = $1, last_updated = NOW() WHERE asset_symbol = $2",
+            "UPDATE stocks SET current_price = $1, updated_at = NOW() WHERE asset_symbol = $2",
             [price, symbol]
           );
           io.to(symbol).emit("price-update", { symbol, price });

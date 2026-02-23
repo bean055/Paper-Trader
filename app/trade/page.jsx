@@ -72,6 +72,10 @@ export default function Trade() {
     fetchAlerts();
   }, [fetchTradePage, fetchWatchlist, fetchAlerts]); 
 
+  useEffect(() =>{
+    setPage(1);
+  },[searchQuery]);
+
   const handleWatchlistToggle = async (ticker)=> {
     const result = await manageWatchlist({ticker})
     if (result.success){
@@ -115,6 +119,34 @@ export default function Trade() {
   }
 };
   
+const getRecommendationMetrics = (rec) => {
+
+  if (!rec || Object.keys(rec).length === 0) {
+    return { score: "N/A", pct: "0%", color: "#5d5d5d" };
+  }
+
+  const total = (rec.strongBuy || 0) + (rec.buy || 0) + (rec.hold || 0) + (rec.sell || 0) + (rec.strongSell || 0);
+  if (total === 0) return { score: "N/A", pct: "0%", color: "#5d5d5d" };
+
+  const score = (
+    (rec.strongBuy * 5) + 
+    (rec.buy * 4) + 
+    (rec.hold * 3) + 
+    (rec.sell * 2) + 
+    (rec.strongSell * 1)
+  ) / total;
+  const buyPct = (((rec.strongBuy + rec.buy) / total) * 100).toFixed(0);
+  let color = "#ffc83e"; 
+  if (score >= 3.75) color = "#31c969"; 
+  if (score <= 2.25) color = "#e05252"; 
+
+  return { 
+    score: score.toFixed(2), 
+    pct: `${buyPct}%`, 
+    color 
+  };
+};
+
 return (
   <>
     <Navbar />
@@ -122,7 +154,7 @@ return (
         <div className="alert-overlay" onClick={() => setAlertComponent(false)}>
           <div className="alert-container" onClick={(e) => e.stopPropagation()}>
              <AlertUI
-                isOpen={AlertComponent}
+              isOpen={AlertComponent}
                ticker={selectedStock.asset_symbol} 
                currentPrice={selectedStock.current_price}
                onSave={SaveAlert} onClose={() => setAlertComponent(false)} 
@@ -240,7 +272,23 @@ return (
                   <label>Dividend Yield</label>
                   <p className="dividend-val">{Number(selectedStock.dividend_yield).toFixed(2)}%</p>
                 </div>
-              )}
+              )}            
+              <div className="detail-stat">
+                <label>Analyst Sentiment</label>
+                {(() => {
+                  const { score, pct, color } = getRecommendationMetrics(selectedStock.recommendation_json);
+                  return (
+                    <div className="sentiment-display">
+                      <p style={{ color: color, fontSize: '1.1rem', margin: 0 }}>
+                        {score} <span style={{ fontSize: '0.7rem', color: '#b8b8b8' }}>/ 5.0</span>
+                      </p>
+                      <p style={{ fontSize: '0.65rem', margin: 0, opacity: 0.8 }}>
+                        {pct} Buy Agreement
+                      </p>
+                    </div>
+                  );
+              })()}
+            </div>
             </div>
           </div>
         ) : (

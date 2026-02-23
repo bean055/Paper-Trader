@@ -28,7 +28,7 @@ async function syncStocks() {
               sector = $1, 
               currency = $2, 
               website = $3,
-              logo_url = $4,
+              logo_url = $4
             WHERE asset_symbol = $5
           `;
 
