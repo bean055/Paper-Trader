@@ -2,9 +2,9 @@ name: Sync Jobs
 
 on:
   schedule:
-    - cron: "20 * * * *"
+    - cron: "0 14-22 * * 1-5"
     - cron: "0 */12 * * *"
-    - cron: "0 0 * * *"
+    - cron: "5 21 * * 1-5"
     - cron: "0 0 1 */2 *"
 
   workflow_dispatch:
@@ -19,9 +19,7 @@ env:
 
 jobs:
   marketdata-sync:
-    if: |
-      github.event_name == 'workflow_dispatch' || 
-      (github.event.schedule == '20 * * * *' && github.event.schedule != '0 0 * * *')
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 14-22 * * 1-5'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -45,7 +43,7 @@ jobs:
       - run: node scripts/news-sync.js
 
   daily-marketdata-sync:
-    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 0 * * *'
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '5 21 * * 1-5'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -8,7 +8,10 @@ import next from "next";
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
+
+const lastUpdateMap = new Map();
+const interval = 2 * 60 * 1000;
 
 app.prepare().then(() => {
   const httpServer = createServer((request, response) => {
@@ -38,18 +41,24 @@ app.prepare().then(() => {
         const parsed = JSON.parse(data);
 
         if (parsed.type === "ping") {
-           console.log("pinged by API");
-           return;
+          console.log("pinged by API");
+          return;
         }
-        
+
         if (parsed.type === "trade" && parsed.data && Array.isArray(parsed.data)) {
           const { s: symbol, p: price } = parsed.data[0];
-          console.log(`Incoming: ${symbol} at $${price}`);
-          await Pool.query(
-            "UPDATE stocks SET current_price = $1, updated_at = NOW() WHERE asset_symbol = $2",
-            [price, symbol]
-          );
-          io.to(symbol).emit("price-update", { symbol, price });
+          const now = Date.now();
+          const lastUpdate = lastUpdateMap.get(symbol) || 0;
+
+          if (now - lastUpdate >= interval) {
+            lastUpdateMap.set(symbol, now);
+            console.log(`Incoming: ${symbol} at $${price}`);
+            await Pool.query(
+              "UPDATE stocks SET current_price = $1, updated_at = NOW() WHERE asset_symbol = $2",
+              [price, symbol]
+            );
+            io.to(symbol).emit("price-update", { symbol, price });
+          }
         }
       });
 
