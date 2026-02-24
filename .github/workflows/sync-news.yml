@@ -2,7 +2,7 @@ name: Sync Jobs
 
 on:
   schedule:
-    - cron: "0 14-22 * * 1-5"
+    - cron: "*/30 14-22 * * 1-5"
     - cron: "0 */12 * * *"
     - cron: "5 21 * * 1-5"
     - cron: "0 0 1 */2 *"
@@ -64,4 +64,4 @@ jobs:
           node-version: "20"
           cache: "npm"
       - run: npm ci --prefer-offline
-      - run: node scripts/monthly-marketdata-sync.js
+      - run: node scripts/bi-monthly-marketdata-sync.js
