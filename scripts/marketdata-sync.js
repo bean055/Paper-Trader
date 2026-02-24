@@ -10,34 +10,47 @@ async function syncStocks() {
   port: parseInt(process.env.DB_PORT),
   ssl: { rejectUnauthorized: false }
 });
-  const groupSize = 10;
+const groupSize = 10;
   try {
     await client.connect();
-    const stockResponse = await client.query("SELECT asset_symbol FROM stocks ORDER BY stock_id ASC");
-    const tickers = stockResponse.rows.map(r => r.asset_symbol);
+    await client.query("DELETE FROM price_history WHERE created_at < NOW() - INTERVAL '6 months'");
 
-    for (let i = 0; i < tickers.length; i += groupSize) {
-      const batch = tickers.slice(i, i + groupSize);
+    const stockResponse = await client.query("SELECT asset_symbol, stock_id FROM stocks ORDER BY stock_id ASC");
+    const stocks = stockResponse.rows; 
 
-      await Promise.all(batch.map(async (ticker) => {
+    for (let i = 0; i < stocks.length; i += groupSize) {
+      const batch = stocks.slice(i, i + groupSize);
+      await Promise.all(batch.map(async (stock) => {
         try {
-          const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${process.env.FINNHUB_KEY}`);
+          const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${stock.asset_symbol}&token=${process.env.FINNHUB_KEY}`);
           const quote = await res.json();
 
           if (quote.c) {
+            await client.query('BEGIN'); 
+            
             await client.query(
               "UPDATE stocks SET current_price = $1, last_price = $2, updated_at = NOW() WHERE asset_symbol = $3",
-              [quote.c, quote.pc, ticker]
+              [quote.c, quote.pc, stock.asset_symbol]
             );
+            await client.query(
+              "INSERT INTO price_history (stock_id, price, created_at) VALUES ($1, $2, NOW())",
+              [stock.stock_id, quote.c]
+            );
+
+            await client.query('COMMIT');
           }
-        } catch (e) {}
+        } catch (e) {
+          await client.query('ROLLBACK'); 
+          console.error(`Error syncing ${stock.asset_symbol}:`, e);
+        }
       }));
 
-      if (i + groupSize < tickers.length) {
+      if (i + groupSize < stocks.length) {
         await new Promise(r => setTimeout(r, 10000));
       }
     }
   } catch (error) {
+    console.error("Global Sync Error:", error);
   } finally {
     await client.end();
   }

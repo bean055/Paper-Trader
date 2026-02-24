@@ -68,7 +68,7 @@ app.prepare().then(() => {
 
       finnhubSocket.on("close", () => {
         console.log("Reconnecting");
-        setTimeout(livePriceData, 5000);
+        setTimeout(livePriceData, 5000);A
       });
     } catch (err) {
       console.error("Initialization Error", err);
