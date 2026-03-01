@@ -51,9 +51,35 @@ async function syncDaily() {
       }
       await new Promise(res => setTimeout(res, 1500));
     }
-    console.log("Daily sync complete");
+    console.log("second loop");
+
+    const historyQuery = `
+      INSERT INTO portfolio_history (portfolio_id, balance_point, equity_point, recorded_at)
+      SELECT 
+        p.portfolio_id, 
+        p.balance, 
+        (p.balance + COALESCE(SUM(h.quantity * s.current_price), 0)) as total_equity,
+        CURRENT_DATE
+      FROM portfolios p
+      LEFT JOIN holdings h ON p.portfolio_id = h.portfolio_id
+      LEFT JOIN stocks s ON h.stock_id = s.stock_id
+      GROUP BY p.portfolio_id, p.balance
+      ON CONFLICT (portfolio_id, recorded_at) 
+      DO UPDATE SET 
+        balance_point = EXCLUDED.balance_point,
+        equity_point = EXCLUDED.equity_point;
+    `;
+    await client.query(historyQuery);
+    
+    const deleteQuery = ` DELETE FROM portfolio_history 
+      WHERE recorded_at < CURRENT_DATE - INTERVAL '180 days';
+    `;
+    await client.query(deleteQuery);
+    
+    console.log("Daily sync and history recording complete");
+
   } catch (e) {
-    console.error(e);
+    console.error("Sync Error:", e);
   } finally {
     await client.end();
   }

@@ -49,7 +49,7 @@ export async function GET(request) {
     return NextResponse.json({ balance, holdings });
 
   } catch (error) {
-    console.error("DASHBOARD_SETUP_ERROR:", error.message);
+    console.error("setup", error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

@@ -7,6 +7,8 @@ import "../../styles/global.css";
 import {manageWatchlist} from "../actions/watchlist";
 import {manageAlert } from "../actions/alerts";
 import AlertUI from "../components/trade/alert";
+import { useRouter, useSearchParams } from "next/navigation";
+import { set } from "date-fns";
 
 
 export default function Trade() {
@@ -21,6 +23,9 @@ export default function Trade() {
   const [orderType, setOrderType] = useState('BUY');
   const [quantity, setQuantity] = useState(0);
 
+  const [portfolio, setPortfolio] = useState(null);
+  const [holdings, setHoldings] = useState([]);
+
   const stocksPerPage = 7;
     const filteredStocks = stocks.filter(stock => 
     stock.asset_symbol?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -28,6 +33,10 @@ export default function Trade() {
   const totalPages = Math.ceil(filteredStocks.length / stocksPerPage);
   const startIndex = (page - 1) * stocksPerPage;
   const paginatedStocks = filteredStocks.slice(startIndex, startIndex + stocksPerPage);
+  
+  const router = useRouter();
+  const searchParams = useSearchParams()
+  const symbolFromUrl = searchParams.get('symbol');
 
   const fetchTradePage = useCallback(async () => {
     try {
@@ -66,11 +75,37 @@ export default function Trade() {
     }
   }, []);  
 
+  const fetchPortfolio = useCallback(async () => {
+    try {
+      const response = await fetch('/api/portfolio'); 
+      const data = await response.json();
+      if (response.ok) {
+        setPortfolio(data.portfolio);
+        setHoldings(data.holdings);
+      }
+    } catch (error) {
+      console.error("Portfolio fetch error", error);
+    }
+  }, []);
+
   useEffect(() => {
     fetchTradePage();
     fetchWatchlist();
     fetchAlerts();
-  }, [fetchTradePage, fetchWatchlist, fetchAlerts]); 
+    fetchPortfolio();
+  }, [fetchTradePage, fetchWatchlist, fetchAlerts, fetchPortfolio]); 
+
+  useEffect(() => {
+    if (symbolFromUrl && stocks.length > 0) {
+      const stockToSelect = stocks.find(
+        (s) => s.asset_symbol?.toLowerCase() === symbolFromUrl.toLowerCase()
+      );
+      
+      if (stockToSelect) {
+        setSelectedStock(stockToSelect);
+      }
+    }
+  }, [symbolFromUrl, stocks]);
 
   useEffect(() =>{
     setPage(1);
@@ -105,17 +140,26 @@ export default function Trade() {
   if (!selectedStock || quantity <= 0) return;
 
   try {
-    const response = await fetch(
-      `/api/trades/execute?type=${orderType}&quantity=${quantity}&stockId=${selectedStock.stock_id}`
-    );
-    
+    const response = await fetch('/api/trades/execution', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: orderType,   
+        quantity: Number(quantity),
+        stockId: selectedStock.stock_id
+      })
+    });
+
     const data = await response.json();
-    
-    if (data.success) {
-      console.log("trade completeed");
+
+    if (response.ok && data.success) {
+      console.log("Trade completed", data.tradeId);
+      fetchPortfolio();setQuantity(0);
+    } else {
+      alert(data.error || "Trade failed");
     }
   } catch (error) {
-    console.error("Trade error", error);
+    console.error("Trade network error", error);
   }
 };
   
@@ -146,6 +190,12 @@ const getRecommendationMetrics = (rec) => {
     color 
   };
 };
+
+  const linkToChart = (ticker) => {
+    router.push(`/chart?symbol=${ticker}`);
+  };
+  const currentHolding = holdings.find(h => h.stock_id === selectedStock?.stock_id);
+const sharesOwned = currentHolding ? currentHolding.quantity : 0;
 
 return (
   <>
@@ -224,6 +274,9 @@ return (
                 </button>
                 <button className="alert-toggle-btn" onClick={()=> handleAlertToggle(selectedStock.asset_symbol)}>
                  <img src={alerts.some(a => a.ticker === selectedStock.asset_symbol) ? "bell.svg" : "bell-off.svg"}/>
+                </button>
+                <button className="chart-link" onClick={() => linkToChart(selectedStock.asset_symbol)}>
+                  <img src={"chart-link.png"}></img>
                 </button>
               </div>
               <div className = "header-right">
@@ -346,17 +399,27 @@ return (
             <div className="trade-ex-stats">
               <div className="ex-stat-row">
                 <label>Shares Held</label>
-                <span>XXX</span> 
+                <span>{sharesOwned}</span> 
               </div>
               
               <div className="ex-stat-row">
-                <label>risk</label>
-                <span>5</span>
+                <label>Balance</label>
+                <span>${Number(portfolio.balance).toFixed(2)}</span>
+              </div>
+
+              <div className="ex-stat-row">
+                <label>Price</label>
+                <span>${Number(selectedStock.current_price).toFixed(2)}</span>
+              </div>
+
+              <div className="ex-stat-row">
+                <label>position</label>
+                <span>${currentHolding ? (sharesOwned * Number(selectedStock.current_price)).toFixed(2) : "0.00"}</span>
               </div>
 
               <div className="ex-stat-row">
                 <label>Market Value</label>
-                <span>$0.00</span>
+                <span>${Number(selectedStock.current_price * quantity).toFixed(2)}</span>
               </div>
             </div>
 
@@ -364,12 +427,19 @@ return (
               <label>Quantity</label>
               <input 
                 type="number" 
-                defaultValue="0" 
+                value={quantity} 
+                onChange={(e) => setQuantity(Math.max(0, parseInt(e.target.value) || 0))}
                 className="quantity-input"
+                min="0"
               />
 
-              <button className="confirm-btn">
-                Confirm Order
+              <button 
+                className="confirm-btn"
+                onClick={confirmTrade} 
+                disabled={quantity <= 0}
+                style={{ opacity: quantity <= 0 ? 0.5 : 1 }}
+              >
+                Confirm {orderType} Order
               </button>
             </div>
           </div>

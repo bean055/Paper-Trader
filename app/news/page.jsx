@@ -2,7 +2,7 @@
 
 import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import "../../styles/pages/news.css";
 import "../../styles/global.css";
 import { manageAlert } from "../actions/alerts";
