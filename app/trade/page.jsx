@@ -8,10 +8,17 @@ import {manageWatchlist} from "../actions/watchlist";
 import {manageAlert } from "../actions/alerts";
 import AlertUI from "../components/trade/alert";
 import { useRouter, useSearchParams } from "next/navigation";
-import { set } from "date-fns";
+import {Suspens} from "react";
 
+export default function TradePage() {
+  return (
+    <Suspense fallback={<div>Loading Trade...</div>}>
+      <Trade />
+    </Suspense>
+  );
+}
 
-export default function Trade() {
+function Trade() {
   const [stocks, setStocks] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStock, setSelectedStock] = useState(null);
