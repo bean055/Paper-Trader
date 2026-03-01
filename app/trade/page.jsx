@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Suspense } from "react";
 import {socket} from "../utilities/socket"
 import "../../styles/pages/trade.css"
 import Navbar from "../components/Navbar"
@@ -8,7 +8,6 @@ import {manageWatchlist} from "../actions/watchlist";
 import {manageAlert } from "../actions/alerts";
 import AlertUI from "../components/trade/alert";
 import { useRouter, useSearchParams } from "next/navigation";
-import {Suspens} from "react";
 
 export default function TradePage() {
   return (
