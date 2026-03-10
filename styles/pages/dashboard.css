@@ -1,34 +1,517 @@
 .Dashboard-page {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 0.75fr 1fr 1fr; 
+  grid-template-rows: minmax(200px, 1fr) minmax(200px, 1fr) minmax(150px, 1.2fr);
+  grid-template-areas: 
+    "portfolio portfolio graph graph watchlist"
+    "portfolio portfolio graph graph watchlist"
+    "trades news risk movers months";
+  
+  height: calc(100vh - 50px);
+  gap: 12px;
+  padding: 12px;
+  margin-top: 50px;
+  box-sizing: border-box;
+
+
+.account-panel { grid-area: portfolio; } 
+.graph-panel { grid-area: graph; }
+.dashboard-watchlist-panel { grid-area: watchlist; }
+.dashboard-trades-panel { grid-area: trades; }
+.dashboard-news-panel { grid-area: news; } 
+.risk-assessment { grid-area: risk; }
+.dashboard-movers-panel { grid-area: movers; }
+.monthly-performance { grid-area: months; }
+
+.account-panel, 
+.graph-panel, 
+.dashboard-watchlist-panel, 
+.dashboard-trades-panel, 
+.dashboard-news-panel, 
+.risk-assessment, 
+.dashboard-movers-panel, 
+.monthly-performance {
+  background: linear-gradient(to bottom, #2E3B2B, #1a2318 90%);
+  border: 1px solid #4a5d45; 
+  border-radius: 8px;
+  overflow: hidden;
   display: flex;
-  justify-content: flex-start; 
-  padding: 80px 40px; 
-  min-height: 100vh;
+  flex-direction: column;
   color: white;
 }
 
-
-.account-info {
-  padding: 24px;
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #121212 !important; 
+  border-bottom: 1px solid #4a5d45; 
+  padding: 10px 15px;
   width: 100%;
-  max-width: 300px; 
-  height: fit-content; 
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
-.account-info h2 {
-  font-size: 1.5rem;
-  margin-bottom: 8px;
-  color: #00d094; 
+.panel-header h1 {
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin: 0;
+  letter-spacing: 2px;
+  color: #bcbcbc;
 }
 
-.account-info p {
+.trades-feed, 
+.news-feed, 
+.movers-list {
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+}
+.watchlist-row{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+} 
+.trade-row, 
+.news-row, 
+.mover-row {
+  flex: none;
+  height: 20%; 
+  min-height: 0;  
+  display: grid;  
+  align-items: center;
+  box-sizing: border-box;
+}
+.nothing{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bcbcbc;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+.positive { color: #67E660; }
+.negative { color: #FF9494; }
+
+.account-stats {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 15px;
+  background: #121212; 
+  border-bottom: 1px solid #4a5d45;
+  padding: 15px;
+  align-items: stretch; 
+}
+.stats-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0px;
+  text-align: center;
+}
+
+.stats-box h3 {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: #878787;
+  margin: 0 0 5px 0;
+}
+.stats-box p {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin: 0;
+  color: white;
+}
+
+.account-chart-container {
+  flex: 1; 
+  margin: 10px 15px 15px 15px;
+  border: 1px solid #4a5d45;
+  border-radius: 12px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; 
+  background: #121212; 
+}
+.chart-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.timeframe-container {
+  position: relative;
+  display: flex;
+  border: 1px solid #4a5d45;
+  border-radius: 6px;
+  padding: 2px;
+  width: 240px; 
+  background: transparent!important;
+}
+.timeframe-btn {
+  position: relative;
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #878787;
+  font-size: 0.7rem;
+  padding: 6px 0;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.3s;
+}
+.timeframe-btn.active {
+  color: white;
+}
+.timeframe-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: calc(25% - 2px); 
+  height: calc(100% - 4px);
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  z-index: 1;
+}
+
+.dashboard-account-chart {
+  flex: 1;
+  height: 0; 
+  width: 100%;
+  position: relative;
+}
+
+.graph-container {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  min-height: 0; 
+  background:#121212;
+}
+
+.title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chart-title-sub {
+  font-size: 0.6rem;
+  color: #6FFF67;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: bold;
+  opacity: 0.8;
+}
+
+.chart-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #4a5d45;
+}
+
+.nav-arrow {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: transform 0.1s ease, opacity 0.2s;
+}
+.nav-arrow:active {
+  transform: scale(0.9);
+}
+.nav-arrow img {
+  width: 20px;
+  height: 20px;
+  filter: invert(0.8); 
+}
+.chart-loader{
+  text-align: center;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  color: #bcbcbc;
+}
+
+.watchlist-feed {
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; 
+  overflow-x: hidden;
+}
+.watchlist-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 80px; 
+  padding: 11px 18px;
+  border-bottom: 1px solid #4a5d45;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.2);
+  transition: background 0.2s;
+  flex: 0 0 auto; 
+  min-height: 50px; 
+}
+.watchlist-feed::-webkit-scrollbar {
+  width: 6px;
+}
+.watchlist-feed::-webkit-scrollbar-thumb {
+  background: #4a5d45;
+  border-radius: 10px;
+}
+.watchlist-row:hover {
+  background-color: rgba(74, 93, 69, 0.1);
+}
+.watch-symbol {
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+.watch-price {
+  text-align: right;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
   font-size: 0.9rem;
-  color: #ffffff;
-  margin-bottom: 16px;
+}
+.watch-change{
+  text-align:right;
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  color: #878787;
 }
 
-.account-info hr {
-  border: 0;
-  border-top: 1px solid #ffffff;
-  margin: 16px 0;
+.trade-row {
+  display: grid;
+  grid-template-columns: 50px 35px 1fr 1fr 80px;
+  padding: 11px 18px; 
+  border-bottom: 1px solid #4a5d45;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.trade-type {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+  width: fit-content;
+  text-align: center;
+}
+
+.trade-symbol{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+.trade-quantity {
+  font-size: 0.7rem;
+  padding: 2px 4px;
+  color: #bcbcbc;
+  font-family: 'Courier New', monospace;
+}
+.trade-price{
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+.trade-total {
+  text-align: left;
+  font-family: 'Courier New', monospace;
+  color: #bcbcbc;
+  font-size: 0.75rem;
+}
+
+.news-row{
+  display: grid;
+  grid-template-columns: 1fr 80px 50px ;
+  padding: 11px 18px; 
+  border-bottom: 1px solid #4a5d45;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+.news-headline {
+  font-weight: bold;
+  font-size: 0.7rem;
+  white-space: nowrap;      
+  overflow: hidden;        
+  text-overflow: ellipsis;  
+  padding-right: 10px;
+}
+.news-source, .news-date {
+  font-size: 0.6rem;
+  color: #bcbcbc;
+  justify-content: space-between;
+}
+
+
+.risk-feed{
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+grid-template-rows: repeat(3,1fr);
+gap: 8px;
+padding: 10px;
+}
+.risk-metric{
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid #4a5d45;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
+}
+.risk-rating{
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid #4a5d45;
+  align-items: center;
+  border-radius:6px;
+  margin-left: 8px;
+  margin-right: 8px;
+  padding: 8px;
+  text-align: center;
+}
+.score-display {
+  text-align: center;
+  align-items: baseline;
+  margin-left: 12px;
+}
+.score-number {
+  font-size: 1.6rem;
+  font-weight: 900;
+  line-height: 1;
+}
+.score-total {
+  font-size: 1rem;
+  color: #555; 
+  font-weight: 500;
+  margin-left: 2px;
+}
+.risk-metric h1{
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  color: #bcbcbc;
+}
+.risk-metric span{
+  font-family: 'Courier New', monospace;
+}
+.risk-rating h1{
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  color: #bcbcbc;
+}
+.red{color: #FF9494;}
+.orange{color: #ffbd94;}
+.green{color:#6FFF67}
+
+
+
+
+
+.mover-controls img{
+  width: 20px;
+  height: 20px; 
+}
+.mover-scope img {
+  position: relative;
+  z-index: 2; 
+  width: 20px;
+  height: 20px;
+  transition: opacity 0.3s;
+}
+.slider {
+  position: absolute;
+  top: 1px;
+  left: 2px;
+  width: calc(50% - 2px); 
+  height: calc(100% - 2px);
+  background-color: rgba(82, 123, 73, 0.2)!important; 
+  border-radius: 4px;
+  transition: transform 0.3s ease;
+  z-index: 1; 
+}
+.mover-scope {
+  position: relative; 
+  display: flex;
+  justify-content: space-around; 
+  align-items: center;
+  width: 100px; 
+  border: 1px solid #4a5d45;
+  border-radius: 6px;
+  cursor: pointer;
+  overflow: hidden;
+}
+.mover-scope.owned .slider {
+  transform: translateX(100%);  
+}
+
+.mover-row{
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  align-items: center;
+  padding: 11px 18px; 
+  background: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #4a5d45;
+}
+.mover-symbol {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: bold;
+}
+.mover-name {
+  overflow: hidden;
+  font-size: 0.8rem;
+  color: #bcbcbc;
+}
+
+.monthly-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); 
+  grid-template-rows: repeat(2, 1fr);    
+  gap: 8px;
+  padding: 12px;
+  flex: 1;
+}
+
+.month-slot {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid #4a5d45;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  transition: all 0.2s ease;
+  color: #bcbcbc;
+}
+.month-label{
+  font-size: small;
+  font-style: italic;
+}
+
+.month-change {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 0.85rem;
+  font-family: 'Courier New', monospace;
+}
+.empty{
+  text-align: center;
+  font-size: 0.8rem;
+  padding-top: 50%;
+  margin: 0;
+  letter-spacing: 2px;
+  color: #bcbcbc;
+}
+
 }

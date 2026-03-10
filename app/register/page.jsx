@@ -86,7 +86,7 @@ export default function RegisterPage() {
           {error && <p className="error">{error}</p>}
 
           <button type="submit">
-            <img src="/enter.svg" alt="Submit" />
+            <img src="/arrow-right.svg"/>
           </button>
 
           <button

@@ -74,18 +74,22 @@ export async function POST(request) {
         [portfolio_id, stockId]
       );
 
-      if (!holdingRes.rows[0] || holdingRes.rows[0].quantity < quantity) throw new Error("Not enough shares");
+      if (!holdingRes.rows[0] || Number(holdingRes.rows[0].quantity) < quantity) {
+        throw new Error("Not enough shares");
+      }
 
       const { quantity: currentQty, average_entry_price, last_risk_score } = holdingRes.rows[0];
       
       const profitLoss = (Number(current_price) - Number(average_entry_price)) * quantity;
-      const dollarRiskAtStake = (Number(total_value)* (Number(last_risk_score) / 100));
-      const rr_ratio = dollarRiskAtStake !== 0 ? (profitLoss / dollarRiskAtStake).toFixed(2) : 0;
+      
+      const totalDollarRisk = Number(total_value) * (Number(last_risk_score) / 100);
+      const realisedRisk = (totalDollarRisk / Number(currentQty)) * quantity;
+      const rr_ratio = realisedRisk !== 0 ? (profitLoss / realisedRisk).toFixed(2) : 0;
 
       const isFullSell = Number(currentQty) === Number(quantity);
       const tradeStatus = isFullSell ? 'CLOSED' : 'OPEN';
 
-      await client.query('UPDATE portfolios SET balance = balance + $1,equity = equity - $1 WHERE portfolio_id = $2', [tradeValue, portfolio_id]);
+      await client.query('UPDATE portfolios SET balance = balance + $1, equity = equity - $1 WHERE portfolio_id = $2', [tradeValue, portfolio_id]);
 
       if (isFullSell) {
         await client.query('DELETE FROM holdings WHERE portfolio_id = $1 AND stock_id = $2', [portfolio_id, stockId]);

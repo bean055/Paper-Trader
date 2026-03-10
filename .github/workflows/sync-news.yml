@@ -2,7 +2,7 @@ name: Sync Jobs
 
 on:
   schedule:
-    - cron: "*/30 14-22 * * 1-5"
+    - cron: "*/50 14-22 * * 1-5"
     - cron: "0 */12 * * *"
     - cron: "5 21 * * 1-5"
     - cron: "0 0 1 */2 *"

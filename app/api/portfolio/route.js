@@ -11,6 +11,7 @@ export async function GET(request) {
   try {
     const userPortfolioRes = await pool.query(
       `SELECT p.portfolio_id, 
+       u.username,
        p.balance, p.equity, p.total_value, p.risk_exposure, p.last_updated
        FROM portfolios p
        JOIN users u ON p.user_id = u.user_id 
@@ -33,6 +34,7 @@ export async function GET(request) {
         s.asset_symbol,
         s.asset_name,
         s.current_price,
+        s.sector,
         s.low_52,
         s.high_52,
         s.eps,

@@ -17,7 +17,6 @@ ChartJS.register(TimeScale, LinearScale, Tooltip, CandlestickController, Candles
 export default function Portfolio() {
   const[portfolio, setPortfolio] = useState(null)
   const[holdings , setHoldings] = useState([])
-  const[loading, setLoading] = useState(true)
   const[error, setError] = useState(null)
   const[selectedStock, setSelectedStock] = useState (null)
 
@@ -43,7 +42,6 @@ export default function Portfolio() {
 
   const fetchPortfolio = async () => {
     try {
-      setLoading(true);
       const response = await fetch("/api/portfolio", { credentials: "include" });
       if (!response.ok) throw new Error("Failed to fetch portfolio");
 
@@ -64,9 +62,7 @@ export default function Portfolio() {
       setHoldings(holdingsWithExposure);
     } catch (err) {
       setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
  const fetchHistory = async (days = timeFrame) => {

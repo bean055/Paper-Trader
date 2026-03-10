@@ -5,10 +5,10 @@
     grid-template-areas:
         "portfolio portfolio info info"
         "holdings holdings holdings movers";
-    height: calc(100vh - 60px);
+    height: calc(100vh - 50px);
     gap: 12px;
     padding: 12px;
-    margin-top: 60px;
+    margin-top: 50px;
     box-sizing: border-box;
 }
 .portfolio-stats { grid-area: portfolio; }

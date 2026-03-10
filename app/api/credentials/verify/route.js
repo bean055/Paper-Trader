@@ -3,30 +3,19 @@ import pool from "../../../utilities/database.js";
 import bcrypt from "bcrypt";
 
 export async function GET(request) {
+  const client = await pool.connect(); 
+
   try {
     const { searchParams } = new URL(request.url);
     const token = searchParams.get("token");
 
     if (!token) {
-      return NextResponse.json(
-        { error: "Missing verification token" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing token" }, { status: 400 });
     }
-
-    const tokenResult = await pool.query(
-      `SELECT user_id, token_hash, expires_at FROM user_tokens 
-       WHERE token_type = 'email_verification' AND expires_at > NOW()`,
-      []
+    const tokenResult = await client.query(
+      `SELECT user_id, token_hash FROM user_tokens 
+       WHERE token_type = 'email_verification' AND expires_at > NOW()`
     );
-
-    if (tokenResult.rows.length === 0) {
-      return NextResponse.json(
-        { error: "Invalid or expired token" },
-        { status: 400 }
-      );
-    }
-
     let matchedUserId = null;
     for (const row of tokenResult.rows) {
       const isMatch = await bcrypt.compare(token, row.token_hash);
@@ -35,31 +24,39 @@ export async function GET(request) {
         break;
       }
     }
-
     if (!matchedUserId) {
-      return NextResponse.json(
-        { error: "Invalid token" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid token" }, { status: 400 });
     }
 
-    await pool.query(
+    await client.query("BEGIN");
+
+    await client.query(
       `UPDATE users SET verified = TRUE WHERE user_id = $1`,
       [matchedUserId]
     );
 
-    await pool.query(
+    await client.query(
+      `INSERT INTO portfolios (user_id, balance, equity)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (user_id) DO NOTHING`,
+      [matchedUserId, 10000, 0]
+    );
+
+    await client.query(
       `DELETE FROM user_tokens WHERE user_id = $1 AND token_type = 'email_verification'`,
       [matchedUserId]
     );
 
-    return NextResponse.json({ success: true, message: "Email verified!" });
+    await client.query("COMMIT");
+
+    return NextResponse.json({ success: true, message: "Account verified" });
 
   } catch (err) {
-    console.error("Verification error:", err.message, err);
-    return NextResponse.json(
-      { error: err.message || "Server error" },
-      { status: 500 }
-    );
+    await client.query("ROLLBACK");
+    console.error("Verification error:", err.message);
+    return NextResponse.json({ error: "Verification failed" }, { status: 500 });
+
+  } finally {
+    client.release();
   }
 }

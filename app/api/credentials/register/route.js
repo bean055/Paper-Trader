@@ -30,12 +30,6 @@ export async function POST(request) {
 
     const userId = userRes.rows[0].user_id;
 
-    await pool.query(
-      `INSERT INTO portfolios (user_id)
-       VALUES ($1)`,
-      [userId]
-    );
-
     const rawToken = crypto.randomBytes(32).toString("hex");
     const tokenHash = await bcrypt.hash(rawToken, 10);
 
