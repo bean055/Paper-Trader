@@ -4,10 +4,10 @@ import Navbar from "../components/Navbar";
 import "../../styles/pages/dashboard.css"; 
 
 import { TreemapController, TreemapElement } from 'chartjs-chart-treemap';
-import { Chart as ChartJS, TimeScale, LinearScale, Tooltip, PointElement, LineElement, CategoryScale, Filler, ArcElement,PieController } from 'chart.js';
+import { Chart as ChartJS, TimeScale, LinearScale, Tooltip, PointElement, LineElement,LineController, CategoryScale, Filler, ArcElement,PieController } from 'chart.js';
 import { Chart } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns'; 
-ChartJS.register(TimeScale, LinearScale, Tooltip, PointElement, LineElement, CategoryScale, Filler,TreemapController, TreemapElement,
+ChartJS.register(TimeScale, LinearScale, Tooltip, PointElement, LineElement,LineController, CategoryScale, Filler,TreemapController, TreemapElement,
   ArcElement, PieController
 );
 
@@ -687,10 +687,10 @@ const getScoreColor = (score) => {
               <h1>Top Movers</h1>
               <div className="mover-controls">
                 <button onClick={() => setMoverType("gains")}>
-                  <img src="/changeup.svg" />
+                  <img src="/changeUp.svg" />
                 </button>
                 <button onClick={() => setMoverType("losses")}>
-                  <img src="/changedown.svg"/>
+                  <img src="/changeDown.svg"/>
                 </button>
               </div>
                 <div 
