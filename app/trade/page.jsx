@@ -198,7 +198,7 @@ const getRecommendationMetrics = (rec) => {
 };
 
   const linkToChart = (ticker) => {
-    router.push(`/chart?symbol=${ticker}`);
+    router.push(`/charts?symbol=${ticker}`);
   };
   const currentHolding = holdings.find(h => h.stock_id === selectedStock?.stock_id);
 const sharesOwned = currentHolding ? currentHolding.quantity : 0;

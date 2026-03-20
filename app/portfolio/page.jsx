@@ -121,8 +121,8 @@ export default function Portfolio() {
     }
   }, [selectedStock?.stock_id, assetTimeframe]);
 
-  const linkToChart = (ticker) => {
-    router.push(`/chart?symbol=${ticker}`);
+  const linkToChart = (stock_id) => {
+    router.push(`/chart?stock_id=${stock_id}`);
   };
 
 

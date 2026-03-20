@@ -1,0 +1,148 @@
+.charts-layout {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 50px);
+  margin-top: 40px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.top-controls {
+  height: 50px;
+  border-bottom: 1px solid #4a5d45;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  gap: 10px;
+  background: #1a1a1a;
+}
+.view-btn{
+  border:1px solid #4a5d45;
+  border-radius: 6px;
+  padding: 5px;
+}
+.control-btn{
+  margin-left: 10px;
+  width: 30px;
+  height: 30px;
+}
+
+.main-view-wrapper {
+  display: flex;
+  flex: 1;
+  position: relative;
+  height: 100%;
+  background-color: #121212;
+}
+
+.left-toolbar {
+  width: 60px;
+  border-right: 1px solid #4a5d45;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  gap: 10px;
+  background: #1a1a1a;
+}
+
+.tool-btn {
+  width: 40px;
+  height: 40px;
+  padding-bottom: 10px;
+  cursor: pointer;
+}
+
+.tool-btn.active {
+  background-color: #4a5d45;
+  margin-left: 5px;
+}
+
+.chart-display-area {
+  flex: 1;
+  position: relative; 
+  padding: 0;
+  height: 100%;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
+  height: 100%;
+}
+
+.charts-single {
+  height: 100%;
+}
+
+.individual-chart-box {
+  background: #121212;
+  border: 1px solid #4a5d45;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+
+.chart-header {
+  height: 45px;
+  background: #1a1a1a;
+  border-bottom: 1px solid #4a5d45;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+}
+.chart-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.toggle-group {
+  display: flex;
+  background: #252525;
+  border-radius: 4px;
+  padding: 2px;
+}
+.toggle-btn {
+  background: transparent;
+  border: none;
+  color: #888;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.toggle-btn.active {
+  background: #4a5d45;
+  color: #fff;
+}
+.search-wrapper input {
+  background: #000;
+  border: 1px solid #333;
+  padding: 4px 8px;
+  border-radius: 3px;
+  width: 100px;
+}
+
+.chart-render-area {
+  flex: 1;
+  min-height: 0; 
+  position: relative;
+}
+
+.global-drawing-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.global-drawing-layer.active {
+  pointer-events: all;
+  cursor: crosshair;
+}

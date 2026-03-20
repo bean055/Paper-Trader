@@ -69,7 +69,7 @@ export default function LoginPage() {
           
           {error && <p className="error">{error}</p>}
 
-          <button type="submit" disabled={loading}>
+          <button className="submit" type="submit" disabled={loading}>
             <img src="/arrow-right.svg" />
           </button>
 
