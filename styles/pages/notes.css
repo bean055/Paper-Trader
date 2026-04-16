@@ -38,7 +38,7 @@ html, body {
 .notes-banner {
   padding-left: 1rem;
   border-bottom: 1px solid #4a5d45;
-  
+  background-color: #121212;
 }
 
 .notes-banner img {
@@ -91,7 +91,7 @@ html, body {
   padding: 0.5rem 0.75rem;
   margin: 0.25rem 0;
   cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: #121212;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   border-radius: 6px;
   transition: background-color 0.2s, box-shadow 0.2s;
@@ -155,6 +155,7 @@ html, body {
 }
 .editor-banner {
   display: flex;
+  
   gap: 1rem;
   justify-content: space-between;
   margin-bottom: 1rem;
@@ -181,7 +182,7 @@ html, body {
   resize: none;
   font-family: "Inter", sans-serif;
   border-bottom: 2px solid rgba(24, 31, 22, 0.2);
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: #121212;
   border-radius: 4px;
   padding: 1rem;
   color: white;

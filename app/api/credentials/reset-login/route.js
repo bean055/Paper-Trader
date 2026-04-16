@@ -38,7 +38,8 @@ export async function POST(request) {
       [userId, tokenHash]
     );
 
-    const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password?token=${rawToken}`;
+    const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || "").trim();
+    const resetUrl = `${baseUrl}/reset-password?token=${rawToken}&id=${userId}`;
 
     const sendResult = await resend.emails.send({
       from: "E-Paper Trader <onboarding@resend.dev>",
@@ -69,19 +70,19 @@ export async function POST(request) {
 
 export async function PUT(request) {
   try {
-    const { token, newPassword } = await request.json();
+    const { token, newPassword, id } = await request.json();
 
-    if (!token || !newPassword) {
+    if (!token || !newPassword || !id) {
       return NextResponse.json(
-        { error: "Token and new password are required" },
+        { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
     const tokenResult = await pool.query(
-      `SELECT user_id, token_hash FROM user_tokens 
-       WHERE token_type = 'password_reset' AND expires_at > NOW()`,
-      []
+      `SELECT token_hash FROM user_tokens 
+       WHERE user_id = $1 AND token_type = 'password_reset' AND expires_at > NOW()`,
+      [id]
     );
 
     if (tokenResult.rows.length === 0) {
@@ -91,35 +92,23 @@ export async function PUT(request) {
       );
     }
 
-    let userId = null;
-    for (const row of tokenResult.rows) {
-      const isMatch = await bcrypt.compare(token, row.token_hash);
-      if (isMatch) {
-        userId = row.user_id;
-        break;
-      }
-    }
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: "Invalid token" },
-        { status: 400 }
-      );
+    const isMatch = await bcrypt.compare(token, tokenResult.rows[0].token_hash);
+    
+    if (!isMatch) {
+      return NextResponse.json({ error: "Invalid token" }, { status: 400 });
     }
 
     const passwordHash = await bcrypt.hash(newPassword, 12);
 
     await pool.query(
-      `UPDATE users SET password_hash = $1,updated_at = NOW()
-      WHERE user_id = $2`,
-      [passwordHash, userId]
+      `UPDATE users SET password_hash = $1, updated_at = NOW()
+       WHERE user_id = $2`,
+      [passwordHash, id]
     );
-
-
     await pool.query(
       `DELETE FROM user_tokens WHERE user_id = $1 
-      AND token_type = 'password_reset'`,
-      [userId]
+       AND token_type = 'password_reset'`,
+      [id]
     );
 
     return NextResponse.json({ success: true, message: "Password updated successfully" });

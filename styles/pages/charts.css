@@ -1,31 +1,33 @@
 .charts-layout {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 50px);
-  margin-top: 40px;
+  height: calc(100vh - 60px);
+  margin-top: 60px;
   box-sizing: border-box;
   overflow: hidden;
 }
 
 .top-controls {
-  height: 50px;
-  border-bottom: 1px solid #4a5d45;
+  height: 60px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end; 
   padding: 0 20px;
-  gap: 10px;
   background: #1a1a1a;
+  box-sizing: border-box;
 }
-.view-btn{
-  border:1px solid #4a5d45;
-  border-radius: 6px;
-  padding: 5px;
-}
-.control-btn{
-  margin-left: 10px;
-  width: 30px;
-  height: 30px;
+.control-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 30px; 
+  max-height: 30px;
+  margin-left: 12px;
+  margin: 5px;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid transparent; 
+  border-radius: 4px;
 }
 
 .main-view-wrapper {
@@ -39,6 +41,7 @@
 .left-toolbar {
   width: 60px;
   border-right: 1px solid #4a5d45;
+  border-top: 1px solid #4a5d45;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -69,7 +72,6 @@
 .charts-grid {
   display: grid;
   grid-template-rows: 1fr 1fr;
-  gap: 10px;
   height: 100%;
 }
 

@@ -42,7 +42,7 @@
 
 .stock-list-banner {
   padding: 16px;
-  background: #242f21;
+  background-color: #121212;
   border-bottom: 1px solid #4a5d45;
 }
 
@@ -55,7 +55,7 @@
 .search-stocks {
   width: 70%;
   padding: 4px 8px;
-  border-bottom: 1px solid #4a5d45;
+  border-bottom: 1px solid #ffffff;
   color: #ffffff; 
   outline: none;
   background: transparent;
@@ -116,7 +116,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px;
-  background: #242f21;
+  background-color: #121212;
   border-top: 1px solid #4a5d45;
 }
 .pagination button {
@@ -140,8 +140,7 @@
   padding: 12px 16px;
   font-size: 0.9rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  background: #242f21;
+  letter-spacing: 1px;background-color: #121212;
   color: #a3b89e;
   border-bottom: 1px solid #4a5d45;
 }
@@ -187,7 +186,7 @@
 .webURL,
 .currency-tag,
 .sector-tag {
-  background: #394a35;
+  background-color: #121212;
   padding: 4px 10px;
   border-radius: 4px;
   font-size: 0.75rem;
@@ -290,7 +289,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #242f21;
+  background-color: #121212;
   border-bottom: 1px solid #4a5d45;
   padding: 4px 10px;
 }
@@ -376,9 +375,9 @@
 .trade-ex-stats {
   display: flex;
   justify-content: space-between;
-  background: rgba(0, 0, 0, 0.15);
   padding: 8px;
   border-radius: 4px;
+  background-color: #121212;
 }
 
 .ex-stat-row {

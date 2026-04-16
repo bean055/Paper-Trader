@@ -222,7 +222,6 @@ return (
     <div className="trade-page">
       <div className="Stocks-panel">
         <div className="stock-list-banner">
-          <h1>Market</h1>
           <input type="text" className="search-stocks" placeholder="Search ticker..."
             onChange={(e) => setSearchQuery(e.target.value)}
           />
