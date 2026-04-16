@@ -33,7 +33,7 @@ function ChartContent() {
   const [rulerPos, setRulerPos] = useState(null);
 
 
-   const redrawAllStrokes = useCallback((strokeList) => {
+  const redrawAllStrokes = useCallback((strokeList) => {
     const canvas = mainCanvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -52,14 +52,14 @@ function ChartContent() {
   }, []);
 
   const startDrawing = (e) => {
-  if (activeTool !== 'draw') return;
-  const canvas = mainCanvasRef.current;
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  currentStrokeRef.current = [{ x, y }];
-  setIsDrawing(true);
-};
+    if (activeTool !== 'draw') return;
+    const canvas = mainCanvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    currentStrokeRef.current = [{ x, y }];
+    setIsDrawing(true);
+  };
 
   const draw = (e) => {
     if (activeTool !== 'draw' || !isDrawing) return;
@@ -142,7 +142,7 @@ function ChartContent() {
     composite.height = areaRect.height;
     const ctx = composite.getContext('2d');
  
-    ctx.fillStyle = '#0d1f0f';
+    ctx.fillStyle = '#121212';
     ctx.fillRect(0, 0, composite.width, composite.height);
  
     chartCanvases.forEach((canvas) => {
@@ -163,11 +163,11 @@ function ChartContent() {
         ]);
         const btn = document.querySelector('.screenshot-btn');
         if (btn) {
-          btn.textContent = '✓ Copied!';
+          btn.textContent = 'Copied';
           setTimeout(() => (btn.textContent = ''), 1500);
         }
       } catch (err) {
-        console.error('Clipboard write failed:', err);
+        console.error('Copy failed:', err);
         const url = URL.createObjectURL(blob);
         window.open(url, '_blank');
       }
@@ -294,7 +294,6 @@ function ChartContent() {
                   transform: 'translateY(-0.5px)',
                 }}
               />
-              {/* Vertical line */}
               <div
                 style={{
                   position: 'absolute',
